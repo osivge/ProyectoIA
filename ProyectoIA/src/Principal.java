@@ -1,14 +1,8 @@
-import java.awt.EventQueue;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,15 +10,19 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JScrollPane;
 
 public class Principal {
 
@@ -32,7 +30,7 @@ public class Principal {
 /*****************************************************/
 	private DefaultTableModel Modelo;
 	private JTable Tabla;
-	private JTable table;
+	private JTable tablaCriaturas;
 /*****************************************************/
 	/**
 	 * Launch the application.
@@ -80,16 +78,16 @@ public class Principal {
 		
 		JPanel panelEditorMapa = new JPanel();
 		tabbedPane.addTab("Mapa", null, panelEditorMapa, null);
+
+		JPanel panelPropiedadesDibujo = new JPanel();
+		panelEditorMapa.add(panelPropiedadesDibujo, BorderLayout.SOUTH);		
+		JPanel panelPropiedadesCelda = new JPanel();
+		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		
 		/*MENÚ ARCHIVO -> ABRIR*/
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
-		panelEditorMapa.add(Tabla);
+		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
 		
-		JPanel panelPropiedadesDibujo = new JPanel();
-		panelEditorMapa.add(panelPropiedadesDibujo, BorderLayout.SOUTH);
-		
-		JPanel panelPropiedadesCelda = new JPanel();
-		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		JMenu mnArchivo = new JMenu("Archivo");
@@ -98,6 +96,7 @@ public class Principal {
 		mnArchivo.add(mntmAbrir);
 		/*MENÚ ARCHIVO -> ABRIR*/
 		
+		/*INICIO Panel Criaturas*/
 		JPanel panelEditorCriaturas = new JPanel();
 		tabbedPane.addTab("Criaturas", null, panelEditorCriaturas, null);
 		panelEditorCriaturas.setLayout(new BorderLayout(0, 0));
@@ -134,11 +133,11 @@ public class Principal {
 		gbc_btnGuardar.gridy = 2;
 		panelBotonesCriaturas.add(btnGuardar, gbc_btnGuardar);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		panelEditorCriaturas.add(scrollPane, BorderLayout.CENTER);
+		JScrollPane scrollPaneTablaCriaturas = new JScrollPane();
+		panelEditorCriaturas.add(scrollPaneTablaCriaturas, BorderLayout.CENTER);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+		tablaCriaturas = new JTable();
+		tablaCriaturas.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"CriaturaEjemplo", "N/A", "1", "3"},
 			},
@@ -146,11 +145,14 @@ public class Principal {
 				"Nombre", "Terreno1", "Terreno2", "Terreno3"
 			}
 		));
-		scrollPane.setViewportView(table);
+		scrollPaneTablaCriaturas.setViewportView(tablaCriaturas);
+		/*FIN Panel Criaturas*/
 		
+		/*INICIO Panel Ejecucion*/
 		JPanel panelEjecucion = new JPanel();
 		tabbedPane.addTab("Ejecucion", null, panelEjecucion, null);
 		
+		/*FIN Panel Ejecucion*/
 		/*EVENTO ABRIR*/
 		mntmAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
