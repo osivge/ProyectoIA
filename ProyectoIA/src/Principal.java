@@ -20,6 +20,11 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JScrollPane;
 
 public class Principal {
 
@@ -27,6 +32,7 @@ public class Principal {
 /*****************************************************/
 	private DefaultTableModel Modelo;
 	private JTable Tabla;
+	private JTable table;
 /*****************************************************/
 	/**
 	 * Launch the application.
@@ -76,7 +82,14 @@ public class Principal {
 		tabbedPane.addTab("Mapa", null, panelEditorMapa, null);
 		
 		/*MENÚ ARCHIVO -> ABRIR*/
+		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla);
+		
+		JPanel panelPropiedadesDibujo = new JPanel();
+		panelEditorMapa.add(panelPropiedadesDibujo, BorderLayout.SOUTH);
+		
+		JPanel panelPropiedadesCelda = new JPanel();
+		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		JMenu mnArchivo = new JMenu("Archivo");
@@ -87,6 +100,53 @@ public class Principal {
 		
 		JPanel panelEditorCriaturas = new JPanel();
 		tabbedPane.addTab("Criaturas", null, panelEditorCriaturas, null);
+		panelEditorCriaturas.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panelBotonesCriaturas = new JPanel();
+		panelEditorCriaturas.add(panelBotonesCriaturas, BorderLayout.EAST);
+		GridBagLayout gbl_panelBotonesCriaturas = new GridBagLayout();
+		gbl_panelBotonesCriaturas.columnWidths = new int[]{0, 0};
+		gbl_panelBotonesCriaturas.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_panelBotonesCriaturas.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panelBotonesCriaturas.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelBotonesCriaturas.setLayout(gbl_panelBotonesCriaturas);
+		
+		JButton btnNuevacriatura = new JButton("NuevaCriatura");
+		GridBagConstraints gbc_btnNuevacriatura = new GridBagConstraints();
+		gbc_btnNuevacriatura.fill = GridBagConstraints.BOTH;
+		gbc_btnNuevacriatura.insets = new Insets(0, 0, 5, 0);
+		gbc_btnNuevacriatura.gridx = 0;
+		gbc_btnNuevacriatura.gridy = 0;
+		panelBotonesCriaturas.add(btnNuevacriatura, gbc_btnNuevacriatura);
+		
+		JButton btnEliminar = new JButton("Eliminar");
+		GridBagConstraints gbc_btnEliminar = new GridBagConstraints();
+		gbc_btnEliminar.insets = new Insets(0, 0, 5, 0);
+		gbc_btnEliminar.fill = GridBagConstraints.BOTH;
+		gbc_btnEliminar.gridx = 0;
+		gbc_btnEliminar.gridy = 1;
+		panelBotonesCriaturas.add(btnEliminar, gbc_btnEliminar);
+		
+		JButton btnGuardar = new JButton("Guardar");
+		GridBagConstraints gbc_btnGuardar = new GridBagConstraints();
+		gbc_btnGuardar.fill = GridBagConstraints.BOTH;
+		gbc_btnGuardar.gridx = 0;
+		gbc_btnGuardar.gridy = 2;
+		panelBotonesCriaturas.add(btnGuardar, gbc_btnGuardar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		panelEditorCriaturas.add(scrollPane, BorderLayout.CENTER);
+		
+		table = new JTable();
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+				{"CriaturaEjemplo", "N/A", "1", "3"},
+			},
+			new String[] {
+				"Nombre", "Terreno1", "Terreno2", "Terreno3"
+			}
+		));
+		scrollPane.setViewportView(table);
 		
 		JPanel panelEjecucion = new JPanel();
 		tabbedPane.addTab("Ejecucion", null, panelEjecucion, null);
