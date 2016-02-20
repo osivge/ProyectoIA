@@ -84,7 +84,7 @@ public class Principal {
 		JPanel panelPropiedadesCelda = new JPanel();
 		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		
-		/*MENÚ ARCHIVO -> ABRIR*/
+		/*MENï¿½ ARCHIVO -> ABRIR*/
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
 		
@@ -94,7 +94,7 @@ public class Principal {
 		menuBar.add(mnArchivo);
 		JMenuItem mntmAbrir = new JMenuItem("Abrir...");
 		mnArchivo.add(mntmAbrir);
-		/*MENÚ ARCHIVO -> ABRIR*/
+		/*MENï¿½ ARCHIVO -> ABRIR*/
 		
 		/*INICIO Panel Criaturas*/
 		JPanel panelEditorCriaturas = new JPanel();
@@ -111,6 +111,10 @@ public class Principal {
 		panelBotonesCriaturas.setLayout(gbl_panelBotonesCriaturas);
 		
 		JButton btnNuevacriatura = new JButton("NuevaCriatura");
+		btnNuevacriatura.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		GridBagConstraints gbc_btnNuevacriatura = new GridBagConstraints();
 		gbc_btnNuevacriatura.fill = GridBagConstraints.BOTH;
 		gbc_btnNuevacriatura.insets = new Insets(0, 0, 5, 0);
@@ -118,15 +122,26 @@ public class Principal {
 		gbc_btnNuevacriatura.gridy = 0;
 		panelBotonesCriaturas.add(btnNuevacriatura, gbc_btnNuevacriatura);
 		
-		JButton btnEliminar = new JButton("Eliminar");
-		GridBagConstraints gbc_btnEliminar = new GridBagConstraints();
-		gbc_btnEliminar.insets = new Insets(0, 0, 5, 0);
-		gbc_btnEliminar.fill = GridBagConstraints.BOTH;
-		gbc_btnEliminar.gridx = 0;
-		gbc_btnEliminar.gridy = 1;
-		panelBotonesCriaturas.add(btnEliminar, gbc_btnEliminar);
+		JButton btnNuevoTerreno = new JButton("Nuevo Terreno");
+		btnNuevoTerreno.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultTableModel modeloCriaturas = (DefaultTableModel)tablaCriaturas.getModel();
+				modeloCriaturas.addColumn("Costo a...");
+			}
+		});
+		GridBagConstraints gbc_btnNuevoTerreno = new GridBagConstraints();
+		gbc_btnNuevoTerreno.insets = new Insets(0, 0, 5, 0);
+		gbc_btnNuevoTerreno.fill = GridBagConstraints.BOTH;
+		gbc_btnNuevoTerreno.gridx = 0;
+		gbc_btnNuevoTerreno.gridy = 1;
+		panelBotonesCriaturas.add(btnNuevoTerreno, gbc_btnNuevoTerreno);
 		
 		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		GridBagConstraints gbc_btnGuardar = new GridBagConstraints();
 		gbc_btnGuardar.fill = GridBagConstraints.BOTH;
 		gbc_btnGuardar.gridx = 0;
@@ -139,12 +154,15 @@ public class Principal {
 		tablaCriaturas = new JTable();
 		tablaCriaturas.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"CriaturaEjemplo", "N/A", "1", "3"},
+				{"COLOR", "", ""},
+				{"TIPO", "", ""}
 			},
 			new String[] {
-				"Nombre", "Terreno1", "Terreno2", "Terreno3"
+				"", "COLOR", "TIPO"
 			}
 		));
+		tablaCriaturas.getColumnModel().getColumn(0).setCellRenderer(
+				tablaCriaturas.getTableHeader().getDefaultRenderer());
 		scrollPaneTablaCriaturas.setViewportView(tablaCriaturas);
 		/*FIN Panel Criaturas*/
 		
@@ -165,7 +183,7 @@ public class Principal {
 				Fila = new Object[1]; 	Columna = new Object[1];
 				
 				if(Mapa!=null) {					
-					/*CREACIÓN DE LA TABLA*/
+					/*CREACIï¿½N DE LA TABLA*/
 					for(j=0; j<=Mapa[0].length; j++){
 						Modelo.addColumn(Columna);
 					}
@@ -173,14 +191,14 @@ public class Principal {
 						Fila[0] = i;
 						Modelo.addRow(Fila);
 					}
-					/*CREACIÓN DE LA TABLA*/
+					/*CREACIï¿½N DE LA TABLA*/
 					
-					/*FIJAR TAMAÑO A COLUMNAS*/
+					/*FIJAR TAMAï¿½O A COLUMNAS*/
 					TableColumnModel columnModel = Tabla.getColumnModel();
 					for (i = 0; i < columnModel.getColumnCount(); i++) {
 					columnModel.getColumn(i).setPreferredWidth(30);
 					}
-					/*FIJAR TAMAÑO A COLUMNAS*/
+					/*FIJAR TAMAï¿½O A COLUMNAS*/
 					
 					/*ENCABEZADOS DE COLUMNAS*/
 					for(i = 1; i <= Mapa.length; i++) {
