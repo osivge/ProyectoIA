@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -31,6 +33,8 @@ public class Principal {
 	private DefaultTableModel Modelo;
 	private JTable Tabla;
 	private JTable tablaCriaturas;
+	private JTable TablaEjecucion;
+	private String[][] Mapa;
 /*****************************************************/
 	/**
 	 * Launch the application.
@@ -70,7 +74,15 @@ public class Principal {
 			new String[]   {	}
 		));
 		Tabla.setBounds(10, 0, 200, 200);
-		//Mapa.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		/*DECLARACION DE LA TABLA*/
+		
+		/*DECLARACION DE LA TABLA*/
+		TablaEjecucion = new JTable();
+		TablaEjecucion.setModel(new DefaultTableModel(
+				new Object[][] {	},
+				new String[]   {	}
+			));
+		TablaEjecucion.setBounds(10, 0, 200, 200);
 		/*DECLARACION DE LA TABLA*/
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -88,13 +100,22 @@ public class Principal {
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
 		
+		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		JMenu mnArchivo = new JMenu("Archivo");
+				
 		menuBar.add(mnArchivo);
 		JMenuItem mntmAbrir = new JMenuItem("Abrir...");
 		mnArchivo.add(mntmAbrir);
 		/*MEN� ARCHIVO -> ABRIR*/
+		
+		/*MENU EJECUTAR -> EJECUTAR*/
+		JMenu mnEjecutar = new JMenu("Ejecutar");
+		menuBar.add(mnEjecutar);
+		JMenuItem mntmEjecutar = new JMenuItem("Ejecutar/Reiniciar");
+		mnEjecutar.add(mntmEjecutar);
+		/*MENU EJECUTAR -> EJECUTAR*/
 		
 		/*INICIO Panel Criaturas*/
 		JPanel panelEditorCriaturas = new JPanel();
@@ -169,59 +190,58 @@ public class Principal {
 		/*INICIO Panel Ejecucion*/
 		JPanel panelEjecucion = new JPanel();
 		tabbedPane.addTab("Ejecucion", null, panelEjecucion, null);
-		
+		panelEjecucion.setLayout(new BorderLayout(0, 0));
+		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);
 		/*FIN Panel Ejecucion*/
+		
 		/*EVENTO ABRIR*/
 		mntmAbrir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int i = 0, j = 0, Caracter = 65;
+			public void actionPerformed(ActionEvent arg0) {	
 				Tabla.setModel(new DefaultTableModel());
 				Modelo = (DefaultTableModel)Tabla.getModel();
-				Tabla.setDefaultRenderer(Object.class, new Render());
-				String[][] Mapa = CargarArchivo();
-				Object [] Fila, Columna;
-				Fila = new Object[1]; 	Columna = new Object[1];
-				
-				if(Mapa!=null) {					
-					/*CREACI�N DE LA TABLA*/
-					for(j=0; j<=Mapa[0].length; j++){
-						Modelo.addColumn(Columna);
-					}
-					for(i=0; i<=Mapa.length; i++){
-						Fila[0] = i;
-						Modelo.addRow(Fila);
-					}
-					/*CREACI�N DE LA TABLA*/
-					
-					/*FIJAR TAMA�O A COLUMNAS*/
-					TableColumnModel columnModel = Tabla.getColumnModel();
-					for (i = 0; i < columnModel.getColumnCount(); i++) {
-					columnModel.getColumn(i).setPreferredWidth(30);
-					}
-					/*FIJAR TAMA�O A COLUMNAS*/
-					
-					/*ENCABEZADOS DE COLUMNAS*/
-					for(i = 1; i <= Mapa.length; i++) {
-						Modelo.setValueAt(Integer.toString(i), i, 0);
-					}
-					for(j = 1; j <= Mapa[0].length; j++) {
-						Modelo.setValueAt(Character.toString((char)Caracter), 0, j);
-						Caracter++;
-					}
-					Modelo.setValueAt("", 0, 0);
-					/*ENCABEZADOS DE COLUMNAS*/
-				
-					
-					/*LLENADO DE MATRIZ*/
-					for(i=1; i<=Mapa.length; i++) {
-						for(j=1; j<=Mapa[0].length; j++) {
-							Modelo.setValueAt(Mapa[i-1][j-1], i, j);
-						}
-					}
-					/*LLENADO DE MATRIZ*/
-				}
+				Tabla.setDefaultRenderer(Object.class, new Celda());
+				Mapa = CargarArchivo();
+				CrearTabla(Mapa);
 			}
 		});
+		
+		/*EVENTO EJECUTAR*/
+		mntmEjecutar.addActionListener(new ActionListener() {
+		public void actionPerformed (ActionEvent argv0) {
+			TablaEjecucion.setModel(new DefaultTableModel());
+			Modelo = (DefaultTableModel)TablaEjecucion.getModel();
+			TablaEjecucion.setDefaultRenderer(Object.class, new Celda());
+			CrearTabla(Mapa);
+			Enmascarar(Mapa);
+		}
+		});
+		/*EVENTO EJECUTAR*/
+		
+		/*EVENTO DE PRUEBA PARA DESENMASCARAR*/
+		TablaEjecucion.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int Fila = TablaEjecucion.rowAtPoint(e.getPoint());
+		         int Columna = TablaEjecucion.columnAtPoint(e.getPoint());
+		         if ((Fila > 0) && (Columna > 0)) {
+		            TablaEjecucion.setValueAt(Mapa[Fila-1][Columna-1], Fila, Columna);	
+		            
+		            if(Fila+1<Mapa.length) {
+		            	TablaEjecucion.setValueAt(Mapa[Fila][Columna-1], Fila+1, Columna);
+		            }
+		            if(Fila-1>0) {
+		            	TablaEjecucion.setValueAt(Mapa[Fila-2][Columna-1], Fila-1, Columna);
+		            }
+		            if(Columna+1<Mapa[0].length) {
+			            TablaEjecucion.setValueAt(Mapa[Fila-1][Columna], Fila, Columna+1);
+			        }
+		            if(Columna-1>0) {
+			            TablaEjecucion.setValueAt(Mapa[Fila-1][Columna-2], Fila, Columna-1);
+			        }
+		         }
+			}
+			
+		});
+		/*EVENTO DE PRUEBA PARA DESENMASCARAR*/
 	}
 	
 	private String[][] CargarArchivo () {
@@ -232,7 +252,6 @@ public class Principal {
 		String[][] Matriz = null;
 		JFileChooser Opcion = new JFileChooser();
 		StringTokenizer Partir;
-		
 		Opcion.setDialogTitle("Selecciona el archivo");
 		FileNameExtensionFilter Filtro = new FileNameExtensionFilter("Archivos de Texto", "txt"); 
 		Opcion.setFileFilter(Filtro);
@@ -277,5 +296,57 @@ public class Principal {
 		
 		return Matriz;
 	}
+	
+	private void CrearTabla (String[][] Mapa) {
+		int i = 0, j = 0, Caracter = 65;
+		
+		Object [] Fila, Columna;
+		Fila = new Object[1]; 	Columna = new Object[1];
 
+		if(Mapa!=null) {					
+			/*CREACI�N DE LA TABLA*/
+			for(j=0; j<=Mapa[0].length; j++){
+				Modelo.addColumn(Columna);
+			}
+			for(i=0; i<=Mapa.length; i++){
+				Fila[0] = i;
+				Modelo.addRow(Fila);
+			}
+			/*CREACI�N DE LA TABLA*/
+			/*FIJAR TAMA�O A COLUMNAS*/
+			TableColumnModel columnModel = Tabla.getColumnModel();
+			for (i = 0; i < columnModel.getColumnCount(); i++) {
+			columnModel.getColumn(i).setPreferredWidth(30);
+			}
+			/*FIJAR TAMA�O A COLUMNAS*/
+			
+			/*ENCABEZADOS DE COLUMNAS*/
+			for(i = 1; i <= Mapa.length; i++) {
+				Modelo.setValueAt(Integer.toString(i), i, 0);
+			}
+			for(j = 1; j <= Mapa[0].length; j++) {
+				Modelo.setValueAt(Character.toString((char)Caracter), 0, j);
+				Caracter++;
+			}
+			Modelo.setValueAt("", 0, 0);
+			/*ENCABEZADOS DE COLUMNAS*/
+		
+			/*LLENADO DE MATRIZ*/
+			for(i=1; i<=Mapa.length; i++) {
+				for(j=1; j<=Mapa[0].length; j++) {
+					Modelo.setValueAt(Mapa[i-1][j-1], i, j);
+				}
+			}
+			/*LLENADO DE MATRIZ*/
+		}
+	}
+
+	private void Enmascarar (String[][] Mapa) {
+		for(int i=1; i<=Mapa.length; i++) {
+			for(int j=1; j<=Mapa[0].length; j++) {
+				Modelo.setValueAt("-1", i, j);
+			}
+		}
+	}
+	
 }
