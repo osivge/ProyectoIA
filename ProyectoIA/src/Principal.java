@@ -419,6 +419,7 @@ public class Principal {
 				Modelo = (DefaultTableModel)Tabla.getModel();
 				Tabla.setDefaultRenderer(Object.class, new Celda());
 				Mapa = CargarArchivo();
+				if(Mapa.length>0)
 				CrearTabla(Mapa);
 			}
 		});
@@ -459,8 +460,11 @@ public class Principal {
 			TablaEjecucion.setModel(new DefaultTableModel());
 			Modelo = (DefaultTableModel)TablaEjecucion.getModel();
 			TablaEjecucion.setDefaultRenderer(Object.class, new Celda());
-			CrearTabla(Mapa);
-			Enmascarar(Mapa);
+			if(Mapa!=null && Mapa.length>0) {
+				ActualizarMapa(Mapa, (DefaultTableModel) Tabla.getModel());
+				CrearTabla(Mapa);
+				Enmascarar(Mapa);
+			}
 		}
 		});
 		/*EVENTO EJECUTAR*/
@@ -595,5 +599,14 @@ public class Principal {
 				Modelo.setValueAt("-1", i, j);
 			}
 		}
+	}
+	
+	private String[][] ActualizarMapa(String[][] Mapa, DefaultTableModel Modelo) {
+		for(int i=1; i<=Mapa.length; i++) {
+			for(int j=1; j<=Mapa[0].length; j++) {
+				Mapa[i-1][j-1] = (String)Modelo.getValueAt(i, j);
+			}
+		}
+		return Mapa;
 	}
 }
