@@ -1,36 +1,60 @@
 package com.modelo;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 	public class Criatura {
-	private ArrayList<Object> refCriatura;
-	private Terreno[][] memoria;
+	private int refCriatura;
+	private Point posicion;
+	private String[][] Mapa;
+	private ArrayList<Integer> costos;
 	
-	public void fijarDatos(String tipoCriatura){
-		ArrayList<Object> auxList = CostMov.singTab.array.get(1);
-		int i = auxList.indexOf(tipoCriatura);
-		for(ArrayList<Object> x : CostMov.singTab.array)
-			auxList.add(x.get(i));
-		refCriatura = auxList;
+	public Criatura(ArrayList<Integer> costos,String[][] Mapa){
+		this.Mapa = Mapa;
+		this.costos = costos;		
+	}
+	public void fijarPosicion(Point posicion){
+		this.posicion = posicion;
 	}
 	
-	public ArrayList<Object> obtenerDatos(){
+	public int obtenerIndice(){
 		return refCriatura;
 	}
-	
-	public void moverArriba(){
-		
+	public Point obtenerPosicion(){
+		return this.posicion;
 	}
 	
-	public void moverAbajo(){
-			
+	public Point moverArriba(){
+		if(this.posicion.y!=0){
+			if(costos.get(Integer.parseInt(Mapa[this.posicion.y-1][this.posicion.x]))!= -1)
+			this.posicion.y--;
 		}
-	
-	public void moverDerecha(){
+		return this.posicion;
 		
 	}
 	
-	public void moverIzquierda(){
+	public Point moverAbajo(){
+		if(this.posicion.y!=Mapa.length-1){
+			if(costos.get(Integer.parseInt(Mapa[this.posicion.y+1][this.posicion.x]))!= -1)
+			this.posicion.y++;
+		}
+		return this.posicion;
+	}
+	
+	public Point moverDerecha(){
+		if(this.posicion.x!=Mapa[0].length-1){
+			if(costos.get(Integer.parseInt(Mapa[this.posicion.x+1][this.posicion.x]))!= -1)
+			this.posicion.x++;
+		}
+		return this.posicion;
+	}
+	
+	public Point moverIzquierda(){
+		if(this.posicion.x!=0){
+			if(costos.get(Integer.parseInt(Mapa[this.posicion.x-1][this.posicion.x]))!= -1)
+			this.posicion.x--;
+		}
+		return this.posicion;
 		
 	}
 }
