@@ -37,6 +37,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Principal {
 
@@ -315,6 +317,19 @@ public class Principal {
 		
 		/*INICIO Panel Ejecucion*/
 		JPanel panelEjecucion = new JPanel();
+		panelEjecucion.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				TablaEjecucion.setModel(new DefaultTableModel());
+				Modelo = (DefaultTableModel)TablaEjecucion.getModel();
+				TablaEjecucion.setDefaultRenderer(Object.class, new Celda());
+				if(Mapa!=null && Mapa.length>0) {
+					ActualizarMapa(Mapa, (DefaultTableModel) Tabla.getModel());
+					CrearTabla(Mapa);
+					Enmascarar(Mapa);
+				}
+			}
+		});
 		tabbedPane.addTab("Ejecucion", null, panelEjecucion, null);
 		panelEjecucion.setLayout(new BorderLayout(0, 0));
 		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);

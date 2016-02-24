@@ -29,46 +29,46 @@ private static final long serialVersionUID = 1L;
 				case "1": //CAMINO
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0xFFCC66"));
-					this.setForeground(Color.decode("0xFFCC66"));
+					this.setForeground(Color.decode("0xFFFFFF"));
 					break;
 				
 				case "2": //AGUA
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0x3399FF"));
-					this.setForeground(Color.decode("0x3399FF"));
+					this.setForeground(Color.decode("0xFFFFFF"));
 					break;
 					
 				case "3": //ARENA
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0xFFFF99"));
-					this.setForeground(Color.decode("0xFFFF99"));
+					this.setForeground(Color.decode("0xFFFFFF"));
 					break;
 				
 				case "4": //BOSQUE
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0x009933"));
-					this.setForeground(Color.decode("0x009933"));
+					this.setForeground(Color.decode("0xFFFFFF"));
 					break;
 			
 				case "5": //PANTANO
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0x666633"));
-					this.setForeground(Color.decode("0x666633"));
+					this.setForeground(Color.decode("0xFFFFFF"));
 					break;
 			
 				case "6": //NIEVE
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0xFFFFFF"));
-					this.setForeground(Color.decode("0xFFFFFF"));
+					this.setForeground(Color.decode("0x000000"));
 					break;
 					
-				case "-1":
+				case "-1"://PARED
 					this.setOpaque(true);
 					this.setBackground(Color.BLACK);	
 					this.setForeground(Color.BLACK);
 					break;
 				
-				default: //PARED
+				default: //DESCONOCIDO
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0x666666"));
 					this.setForeground(Color.decode("0x000000"));
