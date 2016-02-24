@@ -8,8 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -422,6 +425,31 @@ public class Principal {
 		/*EVENTO GUARDAR DEL MENU ARCHIVO*/
 		mntmGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int SeleccionDeArchivo = 0;
+				File Archivo;
+				JFileChooser Opcion = new JFileChooser();
+				Opcion.setDialogTitle("Selecciona la ubicación del archivo");
+				Opcion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				SeleccionDeArchivo = Opcion.showOpenDialog(frame);
+				if(SeleccionDeArchivo == JFileChooser.APPROVE_OPTION) {
+					Archivo = Opcion.getSelectedFile();
+					try{
+						 BufferedWriter writer = new BufferedWriter(new FileWriter(Archivo));
+						 for(String[] x : Mapa){
+							 String line = "";
+							 for(String y : x){
+								 String split[] = y.split(",");
+								 line+=split[0]+',';
+							 }
+							 line = line.substring(0, line.length()-1);
+							 writer.write(line);
+							 writer.newLine();
+						 }
+						 writer.close();
+					}catch(IOException ex){
+						ex.printStackTrace();
+					}
+				}
 			}
 		});
 		
