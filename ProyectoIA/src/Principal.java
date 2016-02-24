@@ -12,9 +12,15 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -22,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -35,6 +42,8 @@ public class Principal {
 	private JTable tablaCriaturas;
 	private JTable TablaEjecucion;
 	private String[][] Mapa;
+	private JTextField txtCoordX;
+	private JTextField txtCoordY;
 /*****************************************************/
 	/**
 	 * Launch the application.
@@ -64,7 +73,7 @@ public class Principal {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 528, 378);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		/*DECLARACION DE LA TABLA*/
@@ -78,6 +87,7 @@ public class Principal {
 		
 		/*DECLARACION DE LA TABLA*/
 		TablaEjecucion = new JTable();
+		TablaEjecucion.setEnabled(false);
 		TablaEjecucion.setModel(new DefaultTableModel(
 				new Object[][] {	},
 				new String[]   {	}
@@ -91,21 +101,129 @@ public class Principal {
 		JPanel panelEditorMapa = new JPanel();
 		tabbedPane.addTab("Mapa", null, panelEditorMapa, null);
 
-		JPanel panelPropiedadesDibujo = new JPanel();
-		panelEditorMapa.add(panelPropiedadesDibujo, BorderLayout.SOUTH);		
-		JPanel panelPropiedadesCelda = new JPanel();
-		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
-		
-		/*MEN� ARCHIVO -> ABRIR*/
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
+		JPanel panelPropiedades = new JPanel();
+		panelEditorMapa.add(panelPropiedades, BorderLayout.SOUTH);		
+		GroupLayout gl_panelPropiedades = new GroupLayout(panelPropiedades);
+		gl_panelPropiedades.setHorizontalGroup(
+			gl_panelPropiedades.createParallelGroup(Alignment.LEADING)
+				.addGap(0, 429, Short.MAX_VALUE)
+		);
+		gl_panelPropiedades.setVerticalGroup(
+			gl_panelPropiedades.createParallelGroup(Alignment.LEADING)
+				.addGap(0, 10, Short.MAX_VALUE)
+		);
+		panelPropiedades.setLayout(gl_panelPropiedades);
+		JPanel panelPropiedadesCelda = new JPanel();
+		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
+		GridBagLayout gbl_panelPropiedadesCelda = new GridBagLayout();
+		gbl_panelPropiedadesCelda.columnWidths = new int[]{36, 19, -1, 20, 0};
+		gbl_panelPropiedadesCelda.rowHeights = new int[]{20, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelPropiedadesCelda.columnWeights = new double[]{1.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panelPropiedadesCelda.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelPropiedadesCelda.setLayout(gbl_panelPropiedadesCelda);
 		
+		JLabel lblX = new JLabel("X");
+		GridBagConstraints gbc_lblX = new GridBagConstraints();
+		gbc_lblX.insets = new Insets(0, 0, 5, 5);
+		gbc_lblX.anchor = GridBagConstraints.EAST;
+		gbc_lblX.gridx = 0;
+		gbc_lblX.gridy = 0;
+		panelPropiedadesCelda.add(lblX, gbc_lblX);
+		
+		txtCoordX = new JTextField();
+		GridBagConstraints gbc_txtCoordX = new GridBagConstraints();
+		gbc_txtCoordX.insets = new Insets(0, 0, 5, 5);
+		gbc_txtCoordX.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCoordX.gridx = 1;
+		gbc_txtCoordX.gridy = 0;
+		panelPropiedadesCelda.add(txtCoordX, gbc_txtCoordX);
+		txtCoordX.setColumns(4);
+		
+		JLabel lblY = new JLabel("Y");
+		GridBagConstraints gbc_lblY = new GridBagConstraints();
+		gbc_lblY.insets = new Insets(0, 0, 5, 5);
+		gbc_lblY.anchor = GridBagConstraints.EAST;
+		gbc_lblY.gridx = 2;
+		gbc_lblY.gridy = 0;
+		panelPropiedadesCelda.add(lblY, gbc_lblY);
+		
+		txtCoordY = new JTextField();
+		GridBagConstraints gbc_txtCoordY = new GridBagConstraints();
+		gbc_txtCoordY.insets = new Insets(0, 0, 5, 0);
+		gbc_txtCoordY.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCoordY.gridx = 3;
+		gbc_txtCoordY.gridy = 0;
+		panelPropiedadesCelda.add(txtCoordY, gbc_txtCoordY);
+		txtCoordY.setColumns(4);
+		
+		JComboBox comboBoxTerreno = new JComboBox();
+		comboBoxTerreno.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Terreno"}));
+		GridBagConstraints gbc_comboBoxTerreno = new GridBagConstraints();
+		gbc_comboBoxTerreno.gridwidth = 4;
+		gbc_comboBoxTerreno.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBoxTerreno.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBoxTerreno.gridx = 0;
+		gbc_comboBoxTerreno.gridy = 2;
+		panelPropiedadesCelda.add(comboBoxTerreno, gbc_comboBoxTerreno);
+		
+		JComboBox comboBoxCriatura = new JComboBox();
+		comboBoxCriatura.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Criatura"}));
+		GridBagConstraints gbc_comboBoxCriatura = new GridBagConstraints();
+		gbc_comboBoxCriatura.gridwidth = 4;
+		gbc_comboBoxCriatura.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBoxCriatura.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBoxCriatura.gridx = 0;
+		gbc_comboBoxCriatura.gridy = 3;
+		panelPropiedadesCelda.add(comboBoxCriatura, gbc_comboBoxCriatura);
+		
+		JCheckBox chckbxVisitado = new JCheckBox("Visitado");
+		GridBagConstraints gbc_chckbxVisitado = new GridBagConstraints();
+		gbc_chckbxVisitado.anchor = GridBagConstraints.WEST;
+		gbc_chckbxVisitado.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxVisitado.gridwidth = 4;
+		gbc_chckbxVisitado.gridx = 0;
+		gbc_chckbxVisitado.gridy = 4;
+		panelPropiedadesCelda.add(chckbxVisitado, gbc_chckbxVisitado);
+		
+		JCheckBox chckbxInicio = new JCheckBox("Inicio");
+		GridBagConstraints gbc_chckbxInicio = new GridBagConstraints();
+		gbc_chckbxInicio.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxInicio.anchor = GridBagConstraints.WEST;
+		gbc_chckbxInicio.gridwidth = 4;
+		gbc_chckbxInicio.gridx = 0;
+		gbc_chckbxInicio.gridy = 5;
+		panelPropiedadesCelda.add(chckbxInicio, gbc_chckbxInicio);
+		
+		JCheckBox chckbxFin = new JCheckBox("Fin");
+		GridBagConstraints gbc_chckbxFin = new GridBagConstraints();
+		gbc_chckbxFin.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxFin.gridwidth = 4;
+		gbc_chckbxFin.anchor = GridBagConstraints.WEST;
+		gbc_chckbxFin.gridx = 0;
+		gbc_chckbxFin.gridy = 6;
+		panelPropiedadesCelda.add(chckbxFin, gbc_chckbxFin);
+		
+		JCheckBox chckbxFijarValoresEn = new JCheckBox("Fijar valores en clic");
+		GridBagConstraints gbc_chckbxFijarValoresEn = new GridBagConstraints();
+		gbc_chckbxFijarValoresEn.anchor = GridBagConstraints.WEST;
+		gbc_chckbxFijarValoresEn.gridwidth = 4;
+		gbc_chckbxFijarValoresEn.insets = new Insets(0, 0, 0, 5);
+		gbc_chckbxFijarValoresEn.gridx = 0;
+		gbc_chckbxFijarValoresEn.gridy = 7;
+		panelPropiedadesCelda.add(chckbxFijarValoresEn, gbc_chckbxFijarValoresEn);
+		
+		/*MEN� ARCHIVO -> ABRIR*/
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		JMenu mnArchivo = new JMenu("Archivo");
 				
 		menuBar.add(mnArchivo);
+		
+		JMenuItem mntmNuevo = new JMenuItem("Nuevo");
+				mnArchivo.add(mntmNuevo);
 		JMenuItem mntmAbrir = new JMenuItem("Abrir...");
 		mnArchivo.add(mntmAbrir);
 		/*MEN� ARCHIVO -> ABRIR*/
@@ -194,6 +312,30 @@ public class Principal {
 		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);
 		/*FIN Panel Ejecucion*/
 		
+		/*EVENTO NUEVO*/
+		mntmNuevo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Tabla.setModel(new DefaultTableModel());
+				Modelo = (DefaultTableModel)Tabla.getModel();
+				Tabla.setDefaultRenderer(Object.class, new Celda());
+				Mapa = new String[][]{{"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"},
+									  {"-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1","-1"}};
+				CrearTabla(Mapa);
+			}
+		});
 		/*EVENTO ABRIR*/
 		mntmAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {	
@@ -348,5 +490,4 @@ public class Principal {
 			}
 		}
 	}
-	
 }
