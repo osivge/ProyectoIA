@@ -75,11 +75,13 @@ public class Principal {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 528, 378);
+		frame.setBounds(100, 100, 600, 380);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		/*DECLARACION DE LA TABLA*/
 		Tabla = new JTable();
+		Tabla.setEnabled(false);
+		
 		Tabla.setModel(new DefaultTableModel(
 			new Object[][] {	},
 			new String[]   {	}
@@ -109,12 +111,12 @@ public class Principal {
 		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		GridBagLayout gbl_panelPropiedadesCelda = new GridBagLayout();
 		gbl_panelPropiedadesCelda.columnWidths = new int[]{36, 19, -1, 20, 0};
-		gbl_panelPropiedadesCelda.rowHeights = new int[]{20, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panelPropiedadesCelda.columnWeights = new double[]{1.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panelPropiedadesCelda.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelPropiedadesCelda.rowHeights = new int[]{20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelPropiedadesCelda.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panelPropiedadesCelda.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelPropiedadesCelda.setLayout(gbl_panelPropiedadesCelda);
 		
-		JLabel lblX = new JLabel("X");
+		JLabel lblX = new JLabel("Columna");
 		GridBagConstraints gbc_lblX = new GridBagConstraints();
 		gbc_lblX.insets = new Insets(0, 0, 5, 5);
 		gbc_lblX.anchor = GridBagConstraints.EAST;
@@ -131,7 +133,7 @@ public class Principal {
 		panelPropiedadesCelda.add(txtCoordX, gbc_txtCoordX);
 		txtCoordX.setColumns(4);
 		
-		JLabel lblY = new JLabel("Y");
+		JLabel lblY = new JLabel("Fila");
 		GridBagConstraints gbc_lblY = new GridBagConstraints();
 		gbc_lblY.insets = new Insets(0, 0, 5, 5);
 		gbc_lblY.anchor = GridBagConstraints.EAST;
@@ -149,7 +151,7 @@ public class Principal {
 		txtCoordY.setColumns(4);
 		
 		JComboBox comboBoxTerreno = new JComboBox();
-		comboBoxTerreno.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Terreno"}));
+		comboBoxTerreno.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Terreno", "CAMINO"}));
 		GridBagConstraints gbc_comboBoxTerreno = new GridBagConstraints();
 		gbc_comboBoxTerreno.gridwidth = 4;
 		gbc_comboBoxTerreno.insets = new Insets(0, 0, 5, 0);
@@ -195,14 +197,24 @@ public class Principal {
 		gbc_chckbxFin.gridy = 6;
 		panelPropiedadesCelda.add(chckbxFin, gbc_chckbxFin);
 		
-		JCheckBox chckbxFijarValoresEn = new JCheckBox("Fijar valores en clic");
-		GridBagConstraints gbc_chckbxFijarValoresEn = new GridBagConstraints();
-		gbc_chckbxFijarValoresEn.anchor = GridBagConstraints.WEST;
-		gbc_chckbxFijarValoresEn.gridwidth = 4;
-		gbc_chckbxFijarValoresEn.insets = new Insets(0, 0, 0, 5);
-		gbc_chckbxFijarValoresEn.gridx = 0;
-		gbc_chckbxFijarValoresEn.gridy = 7;
-		panelPropiedadesCelda.add(chckbxFijarValoresEn, gbc_chckbxFijarValoresEn);
+		JCheckBox chckbxFijarEnClick = new JCheckBox("Fijar valores en click");
+		GridBagConstraints gbc_chckbxFijarEnClick = new GridBagConstraints();
+		gbc_chckbxFijarEnClick.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxFijarEnClick.anchor = GridBagConstraints.WEST;
+		gbc_chckbxFijarEnClick.gridwidth = 4;
+		gbc_chckbxFijarEnClick.gridx = 0;
+		gbc_chckbxFijarEnClick.gridy = 7;
+		panelPropiedadesCelda.add(chckbxFijarEnClick, gbc_chckbxFijarEnClick);
+		
+		JButton btnAplicar = new JButton("Aplicar");
+		
+		GridBagConstraints gbc_btnAplicar = new GridBagConstraints();
+		gbc_btnAplicar.insets = new Insets(0, 0, 5, 0);
+		gbc_btnAplicar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAplicar.gridwidth = 4;
+		gbc_btnAplicar.gridx = 0;
+		gbc_btnAplicar.gridy = 8;
+		panelPropiedadesCelda.add(btnAplicar, gbc_btnAplicar);
 		
 		/*MEN� ARCHIVO -> ABRIR*/
 		
@@ -304,20 +316,72 @@ public class Principal {
 		panelEjecucion.setLayout(new BorderLayout(0, 0));
 		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);
 		/*FIN Panel Ejecucion*/
+		/*EVENTO APLICAR*/
+		btnAplicar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row = Integer.parseInt(txtCoordY.getText());
+                int col = txtCoordX.getText().getBytes()[0]-'A'+1;
+                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
+                	int indiceCriatura =comboBoxCriatura.getSelectedIndex();
+                	Mapa[row][col]=Integer.toString(comboBoxTerreno.getSelectedIndex()-1);
+                	Mapa[row][col]+=",";
+	                Mapa[row][col]+=Integer.toString(indiceCriatura-1);
+                	if(chckbxVisitado.isSelected()) Mapa[row][col]+=",V";
+                	if(chckbxInicio.isSelected()) Mapa[row][col]+=",I";
+                	if(chckbxFin.isSelected()) Mapa[row][col]+=",F";
+                	Tabla.getModel().setValueAt(Mapa[row][col], row, col);	                	
+                }
+			}
+		});
+		/*EVENTO MOUSECLICKED*/
+		Tabla.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(chckbxFijarEnClick.isSelected()){
+					Point p = e.getPoint();
+	                int row = Tabla.rowAtPoint(p);
+	                int col = Tabla.columnAtPoint(p);
+	                
+	                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
+	                	int indiceCriatura =comboBoxCriatura.getSelectedIndex();
+	                	Mapa[row][col]=Integer.toString(comboBoxTerreno.getSelectedIndex()-1);
+	                	Mapa[row][col]+=",";
+		                Mapa[row][col]+=Integer.toString(indiceCriatura-1);
+	                	if(chckbxVisitado.isSelected()) Mapa[row][col]+=",V";
+	                	if(chckbxInicio.isSelected()) Mapa[row][col]+=",I";
+	                	if(chckbxFin.isSelected()) Mapa[row][col]+=",F";
+	                	Tabla.getModel().setValueAt(Mapa[row][col], row, col);	                	
+	                }
+					
+				}else{
+					Point p = e.getPoint();
+	                int row = Tabla.rowAtPoint(p);
+	                int col = Tabla.columnAtPoint(p);
+	                
+	                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
+	                	txtCoordX.setText(Character.toString((char)('A'+col-1)));
+	                	txtCoordY.setText(Integer.toString(row));
+	                	
+	                }
+				}
+			}
+		});
 		
 		/*EVENTO MOUSEMOTION*/
 		Tabla.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				Point p = e.getPoint();
-                int row = Tabla.rowAtPoint(p);
-                int col = Tabla.columnAtPoint(p);
-                
-                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
-                	txtCoordX.setText(Integer.toString(col));
-                	txtCoordY.setText(Integer.toString(row));
-                	
-                }
+				if(chckbxFijarEnClick.isSelected()){
+					Point p = e.getPoint();
+	                int row = Tabla.rowAtPoint(p);
+	                int col = Tabla.columnAtPoint(p);
+	                
+	                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
+	                	txtCoordX.setText(Character.toString((char)('A'+col-1)));
+	                	txtCoordY.setText(Integer.toString(row));
+	                	
+	                }
+				}
 			}
 		});
 		
