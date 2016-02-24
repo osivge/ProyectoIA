@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -32,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import java.awt.event.MouseMotionAdapter;
 
 public class Principal {
 
@@ -103,18 +105,6 @@ public class Principal {
 
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
-		JPanel panelPropiedades = new JPanel();
-		panelEditorMapa.add(panelPropiedades, BorderLayout.SOUTH);		
-		GroupLayout gl_panelPropiedades = new GroupLayout(panelPropiedades);
-		gl_panelPropiedades.setHorizontalGroup(
-			gl_panelPropiedades.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 429, Short.MAX_VALUE)
-		);
-		gl_panelPropiedades.setVerticalGroup(
-			gl_panelPropiedades.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 10, Short.MAX_VALUE)
-		);
-		panelPropiedades.setLayout(gl_panelPropiedades);
 		JPanel panelPropiedadesCelda = new JPanel();
 		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		GridBagLayout gbl_panelPropiedadesCelda = new GridBagLayout();
@@ -224,8 +214,11 @@ public class Principal {
 		
 		JMenuItem mntmNuevo = new JMenuItem("Nuevo");
 				mnArchivo.add(mntmNuevo);
-		JMenuItem mntmAbrir = new JMenuItem("Abrir...");
+		JMenuItem mntmAbrir = new JMenuItem("Abrir");
 		mnArchivo.add(mntmAbrir);
+		
+		JMenuItem mntmGuardar = new JMenuItem("Guardar");
+		mnArchivo.add(mntmGuardar);
 		/*MEN� ARCHIVO -> ABRIR*/
 		
 		/*MENU EJECUTAR -> EJECUTAR*/
@@ -312,6 +305,22 @@ public class Principal {
 		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);
 		/*FIN Panel Ejecucion*/
 		
+		/*EVENTO MOUSEMOTION*/
+		Tabla.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+                int row = Tabla.rowAtPoint(p);
+                int col = Tabla.columnAtPoint(p);
+                
+                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
+                	txtCoordX.setText(Integer.toString(col));
+                	txtCoordY.setText(Integer.toString(row));
+                	
+                }
+			}
+		});
+		
 		/*EVENTO NUEVO*/
 		mntmNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -344,6 +353,11 @@ public class Principal {
 				Tabla.setDefaultRenderer(Object.class, new Celda());
 				Mapa = CargarArchivo();
 				CrearTabla(Mapa);
+			}
+		});
+		/*EVENTO GUARDAR DEL MENU ARCHIVO*/
+		mntmGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		
