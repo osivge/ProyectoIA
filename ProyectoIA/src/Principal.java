@@ -81,6 +81,7 @@ public class Principal {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 600, 380);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		/*DECLARACION DE LA TABLA*/
