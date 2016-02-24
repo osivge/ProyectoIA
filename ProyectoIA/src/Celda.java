@@ -16,14 +16,12 @@ private static final long serialVersionUID = 1L;
 			this.setForeground(Color.decode("0x000000"));
 		} 
 		else {
-			String[] token = ((String) Valor).split(","); 
-			switch (token[0]) {
-			
+			switch ((String) Valor) {
 			
 				case "0": //MONTAÑA
 					this.setOpaque(true);
 					this.setBackground(Color.decode("0x660033"));
-					this.setForeground(Color.decode("0xFFFFFF"));
+					this.setForeground(Color.decode("0x660033"));
 					break;
 			 
 				case "1": //CAMINO
