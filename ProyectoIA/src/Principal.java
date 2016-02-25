@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -6,8 +8,13 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +24,9 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,11 +40,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+
+import com.modelo.CostMov;
+import com.modelo.Criatura;
 
 public class Principal {
 
@@ -46,9 +53,10 @@ public class Principal {
 /*****************************************************/
 	private DefaultTableModel Modelo;
 	private JTable Tabla;
-	private JTable tablaCriaturas;
+	private CostMov tablaCostos;
 	private JTable TablaEjecucion;
 	private String[][] Mapa;
+	private Criatura criatura;
 	private JTextField txtCoordX;
 	private JTextField txtCoordY;
 /*****************************************************/
@@ -81,7 +89,6 @@ public class Principal {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 600, 380);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		/*DECLARACION DE LA TABLA*/
@@ -97,6 +104,27 @@ public class Principal {
 		
 		/*DECLARACION DE LA TABLA*/
 		TablaEjecucion = new JTable();
+		TablaEjecucion.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyChar()=='w'||e.getKeyCode()==KeyEvent.VK_UP){
+					Point posicion = criatura.moverArriba();
+					desenmascarar(posicion);							
+				}
+				if(e.getKeyChar()=='s'||e.getKeyCode()==KeyEvent.VK_DOWN){
+					Point posicion = criatura.moverAbajo();
+					desenmascarar(posicion);
+				}
+				if(e.getKeyChar()=='d'||e.getKeyCode()==KeyEvent.VK_RIGHT){
+					Point posicion = criatura.moverDerecha();
+					desenmascarar(posicion);
+				}
+				if(e.getKeyChar()=='a'||e.getKeyCode()==KeyEvent.VK_LEFT){
+					Point posicion = criatura.moverIzquierda();
+					desenmascarar(posicion);
+				}
+			}
+		});
 		TablaEjecucion.setEnabled(false);
 		TablaEjecucion.setModel(new DefaultTableModel(
 				new Object[][] {	},
@@ -114,6 +142,7 @@ public class Principal {
 		panelEditorMapa.setLayout(new BorderLayout(0, 0));
 		panelEditorMapa.add(Tabla, BorderLayout.CENTER);
 		JPanel panelPropiedadesCelda = new JPanel();
+		
 		panelEditorMapa.add(panelPropiedadesCelda, BorderLayout.EAST);
 		GridBagLayout gbl_panelPropiedadesCelda = new GridBagLayout();
 		gbl_panelPropiedadesCelda.columnWidths = new int[]{36, 19, -1, 20, 0};
@@ -157,7 +186,7 @@ public class Principal {
 		txtCoordY.setColumns(4);
 		
 		JComboBox comboBoxTerreno = new JComboBox();
-		comboBoxTerreno.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Terreno", "CAMINO"}));
+		comboBoxTerreno.setModel(new DefaultComboBoxModel(new String[] {"Selecciona Terreno"}));
 		GridBagConstraints gbc_comboBoxTerreno = new GridBagConstraints();
 		gbc_comboBoxTerreno.gridwidth = 4;
 		gbc_comboBoxTerreno.insets = new Insets(0, 0, 5, 0);
@@ -222,7 +251,7 @@ public class Principal {
 		gbc_btnAplicar.gridy = 8;
 		panelPropiedadesCelda.add(btnAplicar, gbc_btnAplicar);
 		
-		/*MEN� ARCHIVO -> ABRIR*/
+		/*MENï¿½ ARCHIVO -> ABRIR*/
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -237,7 +266,7 @@ public class Principal {
 		
 		JMenuItem mntmGuardar = new JMenuItem("Guardar");
 		mnArchivo.add(mntmGuardar);
-		/*MEN� ARCHIVO -> ABRIR*/
+		/*MENï¿½ ARCHIVO -> ABRIR*/
 		
 		/*MENU EJECUTAR -> EJECUTAR*/
 		JMenu mnEjecutar = new JMenu("Ejecutar");
@@ -263,6 +292,7 @@ public class Principal {
 		JButton btnNuevacriatura = new JButton("NuevaCriatura");
 		btnNuevacriatura.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				tablaCostos.agregarCriatura();
 			}
 		});
 		GridBagConstraints gbc_btnNuevacriatura = new GridBagConstraints();
@@ -275,8 +305,7 @@ public class Principal {
 		JButton btnNuevoTerreno = new JButton("Nuevo Terreno");
 		btnNuevoTerreno.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DefaultTableModel modeloCriaturas = (DefaultTableModel)tablaCriaturas.getModel();
-				modeloCriaturas.addColumn("Costo a...");
+				tablaCostos.agregarTerreno();
 			}
 		});
 		GridBagConstraints gbc_btnNuevoTerreno = new GridBagConstraints();
@@ -289,7 +318,7 @@ public class Principal {
 		JButton btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				System.out.println(tablaCostos.obtenerCosto(0,0)); //Sólo es para probar cómo obtener los costos 
 			}
 		});
 		GridBagConstraints gbc_btnGuardar = new GridBagConstraints();
@@ -298,11 +327,26 @@ public class Principal {
 		gbc_btnGuardar.gridy = 2;
 		panelBotonesCriaturas.add(btnGuardar, gbc_btnGuardar);
 		
-		JScrollPane scrollPaneTablaCriaturas = new JScrollPane();
+		tablaCostos = new CostMov();
+		tablaCostos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Point p = e.getPoint();
+                int row = tablaCostos.rowAtPoint(p);
+                int col = tablaCostos.columnAtPoint(p);
+                
+                if ((row > -1 && row == 2 && col > 2) || (col > -1 && col == 2 && row > 2)) {
+                	Color newColor = JColorChooser.showDialog(null, "Choose a color", Color.RED);
+                	tablaCostos.getModel().setValueAt(newColor, row, col);
+                }
+				
+			}
+		});
+		JScrollPane scrollPaneTablaCriaturas = new JScrollPane(tablaCostos);
 		panelEditorCriaturas.add(scrollPaneTablaCriaturas, BorderLayout.CENTER);
 		
-		tablaCriaturas = new JTable();
-		tablaCriaturas.setModel(new DefaultTableModel(
+		
+		/*tablaCriaturas.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"COLOR", "", ""},
 				{"TIPO", "", ""}
@@ -316,14 +360,15 @@ public class Principal {
 		scrollPaneTablaCriaturas.setViewportView(tablaCriaturas);
 		/*FIN Panel Criaturas*/
 		
+		
 		/*INICIO Panel Ejecucion*/
 		JPanel panelEjecucion = new JPanel();
 		panelEjecucion.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentShown(ComponentEvent arg0) {
+			public void componentShown(ComponentEvent e) {
 				TablaEjecucion.setModel(new DefaultTableModel());
 				Modelo = (DefaultTableModel)TablaEjecucion.getModel();
-				TablaEjecucion.setDefaultRenderer(Object.class, new Celda());
+				TablaEjecucion.setDefaultRenderer(Object.class, setNewRenderer());
 				if(Mapa!=null && Mapa.length>0) {
 					ActualizarMapa(Mapa, (DefaultTableModel) Tabla.getModel());
 					CrearTabla(Mapa);
@@ -335,6 +380,25 @@ public class Principal {
 		panelEjecucion.setLayout(new BorderLayout(0, 0));
 		panelEjecucion.add(TablaEjecucion, BorderLayout.CENTER);
 		/*FIN Panel Ejecucion*/
+		
+		
+		panelEditorMapa.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				if(tablaCostos.getRowCount() > 3){
+					comboBoxTerreno.removeAllItems();
+					comboBoxTerreno.addItem("Selecciona Terreno");
+					for(int i = 3;i<tablaCostos.getRowCount() ;i++)
+						comboBoxTerreno.addItem(tablaCostos.getValueAt(i, 1));
+				}
+				if(tablaCostos.getColumnCount() > 3){
+					comboBoxCriatura.removeAllItems();
+					comboBoxCriatura.addItem("Selecciona Criatura");
+					for(int i = 3;i<tablaCostos.getColumnCount() ;i++)
+						comboBoxCriatura.addItem(tablaCostos.getValueAt(1, i));
+				}
+			}
+		});
 		/*EVENTO APLICAR*/
 		btnAplicar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -362,14 +426,17 @@ public class Principal {
 	                int col = Tabla.columnAtPoint(p);
 	                
 	                if ((row > -1 && row < Tabla.getRowCount()) && (col > -1 && col < Tabla.getColumnCount())) {
-	                	int indiceCriatura =comboBoxCriatura.getSelectedIndex();
+	                	
+	                	int indiceCriatura =comboBoxCriatura.getSelectedIndex()-1;
 	                	Mapa[row][col]=Integer.toString(comboBoxTerreno.getSelectedIndex()-1);
 	                	Mapa[row][col]+=",";
-		                Mapa[row][col]+=Integer.toString(indiceCriatura-1);
+		                Mapa[row][col]+=Integer.toString(indiceCriatura);
 	                	if(chckbxVisitado.isSelected()) Mapa[row][col]+=",V";
 	                	if(chckbxInicio.isSelected()) Mapa[row][col]+=",I";
 	                	if(chckbxFin.isSelected()) Mapa[row][col]+=",F";
-	                	Tabla.getModel().setValueAt(Mapa[row][col], row, col);	                	
+	                	criatura = new Criatura(tablaCostos.obtenerCostosCriatura(indiceCriatura),Mapa);
+	                	Tabla.getModel().setValueAt(Mapa[row][col], row, col);
+	                	Tabla.setDefaultRenderer(Object.class, setNewRenderer());
 	                }
 					
 				}else{
@@ -445,7 +512,7 @@ public class Principal {
 				int SeleccionDeArchivo = 0;
 				File Archivo;
 				JFileChooser Opcion = new JFileChooser();
-				Opcion.setDialogTitle("Selecciona la ubicaci�n del archivo");
+				Opcion.setDialogTitle("Selecciona la ubicación del archivo");
 				Opcion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				SeleccionDeArchivo = Opcion.showOpenDialog(frame);
 				if(SeleccionDeArchivo == JFileChooser.APPROVE_OPTION) {
@@ -469,13 +536,12 @@ public class Principal {
 				}
 			}
 		});
-		
 		/*EVENTO EJECUTAR*/
 		mntmEjecutar.addActionListener(new ActionListener() {
 		public void actionPerformed (ActionEvent argv0) {
 			TablaEjecucion.setModel(new DefaultTableModel());
 			Modelo = (DefaultTableModel)TablaEjecucion.getModel();
-			TablaEjecucion.setDefaultRenderer(Object.class, new Celda());
+			TablaEjecucion.setDefaultRenderer(Object.class, setNewRenderer());
 			if(Mapa!=null && Mapa.length>0) {
 				ActualizarMapa(Mapa, (DefaultTableModel) Tabla.getModel());
 				CrearTabla(Mapa);
@@ -511,7 +577,26 @@ public class Principal {
 		});
 		/*EVENTO DE PRUEBA PARA DESENMASCARAR*/
 	}
-	
+	private void desenmascarar(Point posicion){
+		int Fila = TablaEjecucion.rowAtPoint(posicion);
+        int Columna = TablaEjecucion.columnAtPoint(posicion);
+        if ((Fila > 0) && (Columna > 0)) {
+           TablaEjecucion.setValueAt(Mapa[Fila-1][Columna-1], Fila, Columna);	
+           
+           if(Fila+1<Mapa.length) {
+           	TablaEjecucion.setValueAt(Mapa[Fila][Columna-1], Fila+1, Columna);
+           }
+           if(Fila-1>0) {
+           	TablaEjecucion.setValueAt(Mapa[Fila-2][Columna-1], Fila-1, Columna);
+           }
+           if(Columna+1<Mapa[0].length) {
+	            TablaEjecucion.setValueAt(Mapa[Fila-1][Columna], Fila, Columna+1);
+	        }
+           if(Columna-1>0) {
+	            TablaEjecucion.setValueAt(Mapa[Fila-1][Columna-2], Fila, Columna-1);
+	        }
+        }
+	}
 	private String[][] CargarArchivo () {
 		int SeleccionDeArchivo = 0, FilasTotales = 0, ColumnasTotales = 0, Fila = 0, Columna = 0;
 		File Archivo;
@@ -572,7 +657,7 @@ public class Principal {
 		Fila = new Object[1]; 	Columna = new Object[1];
 
 		if(Mapa!=null) {					
-			/*CREACI�N DE LA TABLA*/
+			/*CREACIï¿½N DE LA TABLA*/
 			for(j=0; j<=Mapa[0].length; j++){
 				Modelo.addColumn(Columna);
 			}
@@ -580,13 +665,13 @@ public class Principal {
 				Fila[0] = i;
 				Modelo.addRow(Fila);
 			}
-			/*CREACI�N DE LA TABLA*/
-			/*FIJAR TAMA�O A COLUMNAS*/
+			/*CREACIï¿½N DE LA TABLA*/
+			/*FIJAR TAMAï¿½O A COLUMNAS*/
 			TableColumnModel columnModel = Tabla.getColumnModel();
 			for (i = 0; i < columnModel.getColumnCount(); i++) {
 			columnModel.getColumn(i).setPreferredWidth(30);
 			}
-			/*FIJAR TAMA�O A COLUMNAS*/
+			/*FIJAR TAMAï¿½O A COLUMNAS*/
 			
 			/*ENCABEZADOS DE COLUMNAS*/
 			for(i = 1; i <= Mapa.length; i++) {
@@ -624,5 +709,42 @@ public class Principal {
 			}
 		}
 		return Mapa;
+	}
+	private DefaultTableCellRenderer setNewRenderer(){
+		DefaultTableCellRenderer newRenderer = new 	Celda(){
+			@Override
+			public Component getTableCellRendererComponent(JTable Tabla, Object Valor, boolean IsSelected, boolean HasFocus, int Fila, int Columna) {
+				super.getTableCellRendererComponent(Tabla, Valor, IsSelected, HasFocus, Fila, Columna);
+				
+				if(Columna==0 || Fila==0) { 
+					this.setOpaque(true);
+					this.setBackground(Color.decode("0x666666"));	
+					this.setForeground(Color.decode("0x000000"));
+				} 
+				else {
+					String[] token = Mapa[Fila][Columna].split(",");
+					boolean changed = false;
+					for(int i = 0; i < tablaCostos.getRowCount()-2;i++){
+						if (token[0].equals(Integer.toString(i))){
+							this.setOpaque(true);
+							if(token.length == 1 ||token[1].equals("-1"))
+								this.setBackground((Color)tablaCostos.obtenerColorTerreno(i));
+							else
+								this.setBackground((Color)tablaCostos.obtenerColorCriatura(Integer.parseInt(token[1])));
+							this.setForeground(Color.decode("0x000000"));
+							changed =true;
+						}
+					}
+					if(token[0].equals("-1")){
+						this.setBackground(Color.decode("0x000000"));
+					}else if(!changed){
+						this.setBackground(Color.decode("0x666666"));
+					}
+				}
+					return this;
+			}
+			
+		};
+		return newRenderer;
 	}
 }
