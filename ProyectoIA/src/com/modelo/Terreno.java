@@ -9,9 +9,9 @@ public class Terreno {
 		return refTerreno;
 	}
 	
-	public void fijarDatos(String tipoTerreno){
+	public void fijarDatos(String tipoTerreno){/*
 		for(ArrayList<Object> x : CostMov.singTab.array)
 			if(x.get(1).equals(tipoTerreno))
-				refTerreno = x;	
+				refTerreno = x;	*/
 	}
 }
